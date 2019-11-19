@@ -1,15 +1,13 @@
-
-
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Servo.h>
 
 // Update these with values suitable for your network.
 
-const char* ssid = "Connectify-me";//"Connectify-me";//"IZZI-0723";
-const char* password ="hola1234";//"hola1234"; //"704FB8270723";
-const char* mqtt_server = "192.168.4.154";
-
+const char* ssid = "AndroidAP66DA";//"Covenant";//"Connectify-me";//"IZZI-0723";
+const char* password ="iqwy4287";//"830beeb287ae";//"hola1234"; //"704FB8270723";
+const char* mqtt_server = "192.168.43.1";
+int vel =30; 
 
 //int LED_BUILTIN = 2;
 
@@ -21,7 +19,9 @@ char msg[50];
 int value = 0;
 
 static const int servoPin = 4; //availible {4, 16, 18, 19, 21}
+static const int servoPin1 = 16;
 Servo servo1;
+Servo servo2; 
 
 void setup_wifi() {
 
@@ -59,15 +59,18 @@ void callback(char* topic, byte* payload, unsigned int length) {
   // Switch on the LED if an 1 was received as first character
   if ((char)payload[0] == '0') {
     servo1.write(90);
+    servo2.write(90);
     digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
     delay(1000);
   } else if ((char)payload[0] == '1'){
     digitalWrite(LED_BUILTIN, LOW);  // Turn the LED off by making the voltage HIGH
-    servo1.write(180);
+    servo1.write(90+vel);
+    servo2.write(90+vel);
     delay(1000);
   } else if((char)payload[0] == '2'){
     digitalWrite(LED_BUILTIN, LOW);  // Turn the LED off by making the voltage HIGH
-    servo1.write(0);
+    servo1.write(90-vel);
+    servo2.write(90-vel);
     delay(1000);
   }
 
@@ -140,6 +143,14 @@ void setup() {
   client.setCallback(callback);
   servo1.attach(
         servoPin, 
+        Servo::CHANNEL_NOT_ATTACHED, 
+        0,
+        180,
+        1000,
+        2000
+    );
+    servo2.attach(
+        servoPin1, 
         Servo::CHANNEL_NOT_ATTACHED, 
         0,
         180,
